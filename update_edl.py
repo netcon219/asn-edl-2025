@@ -1,17 +1,16 @@
 import requests
 
-# List of ASNs
-ASNS = ["AS44477"]  # Add more like: ["AS13335", "AS15169", "AS8075"]
+# List of ASNs to include (no "AS" prefix needed)
+ASNS = ["44477"]  
 
 def get_prefixes(asn):
-    url = f"https://bgpview.io/api/asn/{asn}/prefixes"
+    url = f"https://ipinfo.io/AS{asn}/routes"
     try:
         r = requests.get(url, timeout=10)
         r.raise_for_status()
-        prefixes = r.json().get("data", {}).get("ipv4_prefixes", [])
-        return [p["prefix"] for p in prefixes]
+        return r.text.strip().splitlines()
     except Exception as e:
-        print(f"Error fetching {asn}: {e}")
+        print(f"Error fetching AS{asn}: {e}")
         return []
 
 # Write to blocklist.txt
